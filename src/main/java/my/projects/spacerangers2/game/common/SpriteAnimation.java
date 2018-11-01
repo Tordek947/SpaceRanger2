@@ -1,15 +1,12 @@
 package my.projects.spacerangers2.game.common;
 
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.Pane;
 import my.projects.resources.ImagesBuilder;
 
-public class SpriteAnimation {
+public class SpriteAnimation extends AbstractAnimation {
 	private Image[] images;
 	private int currentImg;
 	private int imageCount;
-	private ImageView window;
 	
 	public static SpriteAnimation explosionSA() {
 		ImagesBuilder ib = ImagesBuilder.getInstance();
@@ -27,41 +24,27 @@ public class SpriteAnimation {
 	}
 	
 	public SpriteAnimation() {
+		super();
 		images = null;
 		currentImg = -1;
 		imageCount = 0;
-		window = new ImageView();
 	}
 
 	public SpriteAnimation(Image[] images) {
-		setImages(images);
-		window = new ImageView();		
+		super();
+		setImages(images);	
+		currentImg = imageCount/2;
 	}
 
 	public void setImages(Image[] images) {
 		this.images = images;
-		imageCount = images.length;
-		currentImg = imageCount/2;		
+		imageCount = images.length;	
 	}
 	
 	public SpriteAnimation(Image[] images, int initialImg) {
-		this.images = images;
-		imageCount = images.length;
+		super();
+		setImages(images);
 		currentImg = initialImg;
-		window = new ImageView();
-	}
-
-	public void bindToParent(Pane parent) {
-		parent.getChildren().add(window);
-	}
-
-	public boolean removeFromParent(Pane parent) {
-		return parent.getChildren().remove(window);
-	}
-
-	public void setWindowPosition(Vector position) {
-		window.setX(position.getX());
-		window.setY(position.getY());
 	}
 
 	public void flipForward() {
@@ -94,14 +77,17 @@ public class SpriteAnimation {
 		return currentImg == imageCount/2;
 	}
 
+	@Override
 	public void redraw() {
 		window.setImage(images[currentImg]);
 	}
 
+	@Override
 	public double getWidth() {
 		return images[0].getWidth();
 	}
 
+	@Override
 	public double getHeight() {
 		return images[0].getHeight();
 	}
