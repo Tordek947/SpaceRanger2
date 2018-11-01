@@ -38,7 +38,7 @@ public class SpriteAnimation extends AbstractAnimation {
 
 	public void setImages(Image[] images) {
 		this.images = images;
-		imageCount = images.length;	
+		imageCount = images.length;
 	}
 	
 	public SpriteAnimation(Image[] images, int initialImg) {

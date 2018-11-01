@@ -2,6 +2,7 @@ package my.projects.spacerangers2.game.common;
 
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
+import my.projects.spacerangers2.game.geometry.Vector;
 /*
  * This class was created just for reducing code length, not for a polymorphism
  */
@@ -27,6 +28,7 @@ public abstract class AbstractAnimation {
 	}
 
 	public abstract void redraw();
+	
 
 	public abstract double getWidth();
 
