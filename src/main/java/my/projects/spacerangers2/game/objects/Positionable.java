@@ -1,12 +1,12 @@
 package my.projects.spacerangers2.game.objects;
 
-import my.projects.spacerangers2.game.geometry.Vector;
+import my.projects.spacerangers2.game.geometry.Point2D;
 
 public interface Positionable {
-	Vector getCentrePosition();
-	void setCentrePosition(Vector position);
+	Point2D getCentrePosition();
+	void setCentrePosition(Point2D position);
 	//Vector getLeftTopPosition();
 	double getLeft();
 	double getTop();
-	void setLeftTopPosition(Vector position);
+	void setLeftTopPosition(Point2D position);
 }

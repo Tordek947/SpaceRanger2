@@ -3,10 +3,11 @@ package my.projects.spacerangers2.game.objects;
 import javafx.scene.layout.Pane;
 import my.projects.spacerangers2.game.common.AbstractAnimation;
 import my.projects.spacerangers2.game.geometry.Bounds;
-import my.projects.spacerangers2.game.geometry.Vector;
+import my.projects.spacerangers2.game.geometry.Point2D;
+import my.projects.spacerangers2.game.geometry.Vector2D;
 
 public abstract class SpaceObject<T extends AbstractAnimation> implements Boundable, Visible, Positionable, Performable, Movable {
-	private Vector topLeftPosition;
+	private Point2D topLeftPosition;
 	private T animation;
 	private Pane representingStage;
 	private boolean isOnStage;
@@ -27,17 +28,17 @@ public abstract class SpaceObject<T extends AbstractAnimation> implements Bounda
 	protected abstract Bounds initializeBounds();
 
 	@Override
-	public Vector getCentrePosition() {
+	public Point2D getCentrePosition() {
 		double x = topLeftPosition.getX() + animation.getWidth()/2;
 		double y = topLeftPosition.getY() + animation.getHeight()/2;
-		Vector position = new Vector(x,y);
+		Point2D position = new Point2D(x,y);
 		return position;
 	}
 
 	@Override
-	public void setCentrePosition(Vector position) {
-		topLeftPosition.setX(position.getX() - animation.getWidth()/2);
-		topLeftPosition.setY(position.getY() - animation.getHeight()/2);
+	public void setCentrePosition(Point2D position) {
+		topLeftPosition.setX((position.getX() - animation.getWidth()/2));
+		topLeftPosition.setY((position.getY() - animation.getHeight()/2));
 	}
 	
 	@Override
@@ -51,8 +52,8 @@ public abstract class SpaceObject<T extends AbstractAnimation> implements Bounda
 	}
 
 	@Override
-	public void setLeftTopPosition(Vector position) {
-		topLeftPosition = new Vector(position);
+	public void setLeftTopPosition(Point2D position) {
+		topLeftPosition = new Point2D(position);
 	}
 
 	/**
@@ -83,8 +84,8 @@ public abstract class SpaceObject<T extends AbstractAnimation> implements Bounda
 	}
 
 	@Override
-	public void moveByVector(Vector delta) {
-		topLeftPosition.increaseBy(delta);
+	public void moveByVector(Vector2D delta) {
+		topLeftPosition.shiftBy(delta);
 	}
 	
 }
