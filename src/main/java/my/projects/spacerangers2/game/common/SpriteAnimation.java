@@ -1,22 +1,24 @@
 package my.projects.spacerangers2.game.common;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 import javafx.scene.image.Image;
 
 public class SpriteAnimation extends AbstractAnimation {
 	private Image[] images;
-	private int currentImg;
+	private AtomicInteger currentImg;
 	private int imageCount;
 
 	public SpriteAnimation() {
 		images = null;
-		currentImg = -1;
+		currentImg = new AtomicInteger(-1);
 		imageCount = 0;
 	}
 
 	protected SpriteAnimation(Image[] images) {
 		super();
 		setImages(images);	
-		currentImg = imageCount/2;
+		currentImg = new AtomicInteger(imageCount/2);
 	}
 
 	public void setImages(Image[] images) {
@@ -27,20 +29,22 @@ public class SpriteAnimation extends AbstractAnimation {
 	protected SpriteAnimation(Image[] images, int initialImg) {
 		super();
 		setImages(images);
-		currentImg = initialImg;
+		currentImg = new AtomicInteger(initialImg);
 	}
 
 	public void flipForward() {
-		currentImg++;
-		if (currentImg == imageCount) {
-			currentImg = 0;
+		if (currentImg.get() == imageCount-1) {
+			currentImg.set(0);
+		} else {
+			currentImg.incrementAndGet();
 		}
 	}
 
 	public void flipBack() {
-		currentImg--;
-		if (currentImg < 0) {
-			currentImg = imageCount-1;
+		if (currentImg.get() == 0) {
+			currentImg.set(imageCount-1);
+		} else {
+			currentImg.decrementAndGet();
 		}
 	}
 
@@ -49,20 +53,20 @@ public class SpriteAnimation extends AbstractAnimation {
 	}
 
 	public boolean isFirstFlip() {
-		return currentImg == 0;
+		return currentImg.get() == 0;
 	}
 
 	public boolean isLastFlip() {
-		return currentImg == imageCount-1;
+		return currentImg.get() == imageCount-1;
 	}
 
 	public boolean isCentralFlip() {
-		return currentImg == imageCount/2;
+		return currentImg.get() == imageCount/2;
 	}
 
 	@Override
 	public void redraw() {
-		window.setImage(images[currentImg]);
+		window.setImage(images[currentImg.get()]);
 	}
 
 	@Override
