@@ -9,33 +9,32 @@ import my.projects.spacerangers2.game.geometry.Vector2D;
 public abstract class SpaceObject<T extends AbstractAnimation> implements Boundable, Visible, Positionable, Performable, Movable {
 	
 	private Point2D topLeftPosition;
-	private T animation;
+	protected T animation;
 	private Pane representingStage;
 	private boolean isOnStage;
 	/**
 	 * they have to be calculated according to specified animation and are binded to topLeftPosition as their origin.
 	 */
 	private Bounds bounds;
-	private BoundsInitializer boundsInitializer;
 	
-	public SpaceObject(T animation, Pane representingStage, BoundsInitializer boundsInitializer) {
+	public SpaceObject(T animation, Pane representingStage, Bounds bounds) {
 		topLeftPosition = new Point2D();
 		this.animation = animation;
 		this.representingStage = representingStage;
 		this.isOnStage = false;
-		this.boundsInitializer = boundsInitializer;
-		initializeBounds();
-	}
-
-	/**
-	 * Calculate Bounds (depending on particular images in animation)
-	 * @return calculated bounds
-	 */
-	private void initializeBounds() {
-		bounds = boundsInitializer.get();
+		this.bounds = bounds;
 		bounds.setObjectCoordinatePoint(topLeftPosition);
 	}
-	
+//
+//	/**
+//	 * Calculate Bounds (depending on particular images in animation)
+//	 * @return calculated bounds
+//	 */
+//	private void initializeBounds() {
+//		bounds = boundsInitializer.get();
+//		bounds.setObjectCoordinatePoint(topLeftPosition);
+//	}
+//	
 	@Override
 	public Point2D getCentrePosition() {
 		double x = topLeftPosition.getX() + animation.getWidth()/2;
@@ -102,5 +101,10 @@ public abstract class SpaceObject<T extends AbstractAnimation> implements Bounda
 		topLeftPosition.shiftBy(delta);
 	}
 	
+	@Override
+	public void perform() {
+		animation.setWindowPosition(topLeftPosition.getX(), topLeftPosition.getY());
+		animation.redraw();
+	}
 	
 }

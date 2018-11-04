@@ -6,15 +6,9 @@ import my.projects.spacerangers2.game.common.SingleImageAnimation;
 
 public class SimpleSpaceObject extends SpaceObject<SingleImageAnimation> {
 
-	private SimpleSpaceObject(Appearance<SingleImageAnimation> appearance, Pane representingStage) {
-		super(appearance.getAnimation(), representingStage, appearance.getBoundsInitializer());
+	public SimpleSpaceObject(Appearance<SingleImageAnimation> appearance, Pane representingStage) {
+		super(appearance.getAnimation(), representingStage, appearance.getBounds());
 		// TODO Auto-generated constructor stub
-	}
-
-	@Override
-	public void perform() {
-		// TODO Auto-generated method stub
-		
 	}
 
 }

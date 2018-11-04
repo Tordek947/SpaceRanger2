@@ -1,22 +1,22 @@
 package my.projects.spacerangers2.game.common;
 
-import my.projects.spacerangers2.game.objects.BoundsInitializer;
+import my.projects.spacerangers2.game.geometry.Bounds;
 
 public class Appearance<T extends AbstractAnimation> {
 	private T animation;
-	private BoundsInitializer boundsInitializer;
+	private Bounds bounds;
 	
-	protected Appearance(T animation, BoundsInitializer boundsInitializer) {
+	protected Appearance(T animation, Bounds bounds) {
 		this.animation = animation;
-		this.boundsInitializer = boundsInitializer;
+		this.bounds = bounds;
 	}
 
 	public T getAnimation() {
 		return animation;
 	}
 
-	public BoundsInitializer getBoundsInitializer() {
-		return boundsInitializer;
+	public Bounds getBounds() {
+		return bounds;
 	}
 		
 }
