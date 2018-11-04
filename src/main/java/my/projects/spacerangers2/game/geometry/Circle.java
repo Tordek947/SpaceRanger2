@@ -6,8 +6,8 @@ public class Circle implements GeometricalPrimitive {
 	private double radius;
 	
 	
-	private Circle(Point2D centralPoint, double radius) {
-		this.centralPoint = centralPoint;
+	private Circle( double radius) {
+		centralPoint = new Point2D();
 		this.radius = radius;
 	}
 
@@ -38,5 +38,4 @@ public class Circle implements GeometricalPrimitive {
 	public void setCentralPointInGlobal(Point2D point) {
 		centralPoint.setNewValues(point);
 	}
-
 }

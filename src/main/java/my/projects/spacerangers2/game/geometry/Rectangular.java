@@ -60,6 +60,7 @@ public class Rectangular implements GeometricalPrimitive {
 		centralSystem.setNewOPoint(point);
 	}
 
+	
 	public static Rectangular fromPoints(Point2D topLeft, Point2D topRight, Point2D bottomLeft) throws IllegalArgumentException{
 		if (topLeft.getX() > topRight.getX() || bottomLeft.getX() > topRight.getX() ||
 				topLeft.getY() < bottomLeft.getY() || topRight.getY() < bottomLeft.getY()) {
@@ -72,5 +73,5 @@ public class Rectangular implements GeometricalPrimitive {
 		AxisSystem axisSystem = AxisSystem.ortogonal(firstDirection, center);
 		return new Rectangular(axisSystem, length, width);
 	}
-	
+
 }

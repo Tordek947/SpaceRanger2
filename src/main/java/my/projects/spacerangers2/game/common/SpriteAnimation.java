@@ -1,36 +1,19 @@
 package my.projects.spacerangers2.game.common;
 
 import javafx.scene.image.Image;
-import my.projects.resources.ImagesBuilder;
 
 public class SpriteAnimation extends AbstractAnimation {
 	private Image[] images;
 	private int currentImg;
 	private int imageCount;
-	
-	public static SpriteAnimation explosionSA() {
-		ImagesBuilder ib = ImagesBuilder.getInstance();
-		return new SpriteAnimation(ib.getExplosionImages(),0);
-	}
-	
-	public static SpriteAnimation asteroidSA() {
-		ImagesBuilder ib = ImagesBuilder.getInstance();
-		return new SpriteAnimation(ib.getAsteroidImages());
-	}
-	
-	public static SpriteAnimation userShipSA() {
-		ImagesBuilder ib = ImagesBuilder.getInstance();
-		return new SpriteAnimation(ib.getUserShipImages());
-	}
-	
+
 	public SpriteAnimation() {
-		super();
 		images = null;
 		currentImg = -1;
 		imageCount = 0;
 	}
 
-	public SpriteAnimation(Image[] images) {
+	protected SpriteAnimation(Image[] images) {
 		super();
 		setImages(images);	
 		currentImg = imageCount/2;
@@ -41,7 +24,7 @@ public class SpriteAnimation extends AbstractAnimation {
 		imageCount = images.length;
 	}
 	
-	public SpriteAnimation(Image[] images, int initialImg) {
+	protected SpriteAnimation(Image[] images, int initialImg) {
 		super();
 		setImages(images);
 		currentImg = initialImg;

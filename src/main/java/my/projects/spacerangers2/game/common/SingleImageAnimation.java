@@ -7,11 +7,10 @@ public class SingleImageAnimation extends AbstractAnimation {
 	private Image image;
 
 	public SingleImageAnimation() {
-		super();
 		image = null;
 	}
 
-	public SingleImageAnimation(Image image) {
+	protected SingleImageAnimation(Image image) {
 		super();
 		setImage(image);
 	}

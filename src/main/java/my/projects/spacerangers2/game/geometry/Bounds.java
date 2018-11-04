@@ -3,19 +3,23 @@ package my.projects.spacerangers2.game.geometry;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class Bounds {
+public class Bounds {
 
 	private Point2D objectCoordinatePoint;
 	private List<BoundsUnit> boundsList;
 	
-	public Bounds(Point2D objectCoordinatePoint) {
-		this.objectCoordinatePoint = objectCoordinatePoint;
+	public Bounds() {
+		this.objectCoordinatePoint = null;
 		boundsList = new ArrayList<>();
 	}
 	
 	public void addPrimitive(Vector2D shiftToPrimitive, GeometricalPrimitive primitive) {
-		primitive.setCentralPointInGlobal(objectCoordinatePoint);
+//		primitive.setCentralPointInGlobal(objectCoordinatePoint);
 		boundsList.add(new BoundsUnit(primitive, shiftToPrimitive));
+	}
+	
+	public void setObjectCoordinatePoint(Point2D point) {
+		objectCoordinatePoint = point;
 	}
 	
 	public boolean intersects(Bounds other) {

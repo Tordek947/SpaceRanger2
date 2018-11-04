@@ -17,7 +17,6 @@ public class BoundsUnit {
 	
 	public boolean intersects(BoundsUnit otherUnit) {
 		return primitive.intersects(otherUnit.primitive);
-	}
-	
+	}	
 	
 }

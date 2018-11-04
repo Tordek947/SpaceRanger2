@@ -16,6 +16,11 @@ public class Point2D {
 		doubleY = new AtomicLong(point.getYAsLong());
 	}
 
+	public Point2D() {
+		doubleX = new AtomicLong();
+		doubleY = new AtomicLong();
+	}
+
 	private long getXAsLong() {
 		return doubleX.get();
 	}
@@ -25,9 +30,8 @@ public class Point2D {
 	}
 
 	public void setNewValues(Point2D point) {
-		doubleX.set(point.getXAsLong());
-		doubleY.set(point.getYAsLong());
 	}
+
 	
 	public void shiftBy(Vector2D...vectors) {
 		for(Vector2D v : vectors) {
