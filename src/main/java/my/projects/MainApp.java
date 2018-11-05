@@ -31,7 +31,7 @@ public class MainApp extends Application {
         start.setOnAction(new EventHandler<ActionEvent>() {
 
 			public void handle(ActionEvent event) {
-				buildAndShowGameStage();
+				buildAndShowGameStage(stage);
 			}
         	
         });
@@ -51,7 +51,7 @@ public class MainApp extends Application {
         stage.show();
     }
 
-	protected void buildAndShowGameStage() {
-		System.out.println("Is working?");
+	protected void buildAndShowGameStage(Stage stage) {
+		
 	}
 }

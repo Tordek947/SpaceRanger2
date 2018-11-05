@@ -4,7 +4,7 @@ import javafx.application.Platform;
 import my.projects.spacerangers2.game.concurrent.EntitySynchronizable;
 import my.projects.spacerangers2.game.objects.SpaceObject;
 
-public abstract class SpaceEntity<T extends SpaceObject<?>> implements Runnable{
+public abstract class SpaceEntity<T extends SpaceObject<?>> implements Runnable {
 	
 	private EntitySynchronizable synchronizer;
 	protected T object;
@@ -17,17 +17,20 @@ public abstract class SpaceEntity<T extends SpaceObject<?>> implements Runnable{
 	@Override
 	public void run() {
 		initializeObject();
-		Platform.runLater(()->object.perform());
 		while(aliveCondition()) {
-			if (synchronizer.isStagePause()) {
-				synchronizer.waitForStageResume();
+			if (synchronizer.isScenePause()) {
+				synchronizer.waitForSceneResume();
 			}
-			computeNextState();
+			if (synchronizer.isSceneDisabled()) {
+				break;
+			}
 			Platform.runLater(()->object.perform());
+			computeNextState();
 			synchronizer.waitForAnimationTick();
 		}
 		finalizeObject();
 	}
+
 
 	protected abstract void initializeObject();
 
