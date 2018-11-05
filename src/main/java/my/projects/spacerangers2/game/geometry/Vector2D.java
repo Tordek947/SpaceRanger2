@@ -41,4 +41,11 @@ public class Vector2D {
 		return new Vector2D(-first.y, first.x);
 	}
 
+	public static Vector2D randomDirection() {
+		double fi = Math.random()*Math.PI*2;
+		double x = Math.cos(fi);
+		double y = Math.sin(fi);
+		return new Vector2D(x,y);
+	}
+
 }

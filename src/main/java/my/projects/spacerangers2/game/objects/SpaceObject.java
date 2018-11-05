@@ -36,7 +36,7 @@ public abstract class SpaceObject<T extends AbstractAnimation> implements Bounda
 //	}
 //	
 	@Override
-	public Point2D getCentrePosition() {
+	public Point2D getCenterPosition() {
 		double x = topLeftPosition.getX() + animation.getWidth()/2;
 		double y = topLeftPosition.getY() + animation.getHeight()/2;
 		Point2D position = new Point2D(x,y);
@@ -44,7 +44,7 @@ public abstract class SpaceObject<T extends AbstractAnimation> implements Bounda
 	}
 
 	@Override
-	public void setCentrePosition(Point2D position) {
+	public void setCenterPosition(Point2D position) {
 		topLeftPosition.setX((position.getX() - animation.getWidth()/2));
 		topLeftPosition.setY((position.getY() - animation.getHeight()/2));
 	}
@@ -62,6 +62,12 @@ public abstract class SpaceObject<T extends AbstractAnimation> implements Bounda
 	@Override
 	public void setLeftTopPosition(Point2D position) {
 		topLeftPosition.setNewValues(position);
+	}	
+	
+	@Override
+	public void setLeftTopPosition(double left, double top) {
+		topLeftPosition.setX(left);
+		topLeftPosition.setY(top);
 	}
 
 	/**

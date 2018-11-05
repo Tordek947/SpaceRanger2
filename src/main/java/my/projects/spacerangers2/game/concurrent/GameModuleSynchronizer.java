@@ -16,12 +16,11 @@ public class GameModuleSynchronizer implements EntitySynchronizable, Synchroniza
 		pause = new AtomicBoolean(true);
 		sceneIsDisabled = new AtomicBoolean(true);
 		this.entityPermits = 0;
-		gameModuleEntityWatcher = null;
+		gameModuleEntityWatcher = new Semaphore(0);
 	}
 	
-	public void setEntityPermits(int entityPermits) {
-		this.entityPermits = entityPermits;
-		gameModuleEntityWatcher = new Semaphore(entityPermits);
+	public void incrementTotalEntityPermits() {
+		this.entityPermits++;
 	}
 	
 	@Override

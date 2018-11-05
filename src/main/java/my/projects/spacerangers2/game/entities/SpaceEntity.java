@@ -13,7 +13,11 @@ public abstract class SpaceEntity<T extends SpaceObject<?>> implements Runnable 
 		this.synchronizer = synchronizer;
 		this.object = object;
 	}
-
+	
+	public void setInitialPosition(double left, double top) {
+		object.setLeftTopPosition(left, top);
+	}
+	
 	@Override
 	public void run() {
 		initializeObject();
@@ -31,7 +35,6 @@ public abstract class SpaceEntity<T extends SpaceObject<?>> implements Runnable 
 		finalizeObject();
 	}
 
-
 	protected abstract void initializeObject();
 
 	protected abstract boolean aliveCondition();
@@ -39,5 +42,6 @@ public abstract class SpaceEntity<T extends SpaceObject<?>> implements Runnable 
 	protected abstract void computeNextState();
 
 	protected abstract void finalizeObject();
+
 	
 }
