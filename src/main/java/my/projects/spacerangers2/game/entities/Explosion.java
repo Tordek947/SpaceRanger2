@@ -6,7 +6,7 @@ import my.projects.spacerangers2.game.common.Voice;
 import my.projects.spacerangers2.game.concurrent.EntitySynchronizable;
 import my.projects.spacerangers2.game.objects.AnimatedSpaceObject;
 
-public class Explosion extends SpaceEntity<AnimatedSpaceObject> {
+public class Explosion extends UnpausableSpaceEntity<AnimatedSpaceObject> {
 
 	private Voice explosionVoice;
 	private Semaphore voiceSemaphore;
@@ -36,7 +36,7 @@ public class Explosion extends SpaceEntity<AnimatedSpaceObject> {
 	}
 
 	@Override
-	protected void computeNextState() {
+	protected void performLifecycleIteration() {
 		object.nextAnimationFrame();
 	}
 

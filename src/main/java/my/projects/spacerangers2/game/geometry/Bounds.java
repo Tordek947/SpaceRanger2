@@ -22,7 +22,7 @@ public class Bounds {
 		objectCoordinatePoint = point;
 	}
 	
-	public boolean intersects(Bounds other) {
+	public boolean intersect(Bounds other) {
 		update();
 		other.update();
 		for(BoundsUnit bu : boundsList) {
