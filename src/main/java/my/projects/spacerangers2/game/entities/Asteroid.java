@@ -4,14 +4,14 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
+import javafx.application.Platform;
 import my.projects.spacerangers2.game.concurrent.AimableWatchList;
 import my.projects.spacerangers2.game.concurrent.EntitySynchronizable;
-import my.projects.spacerangers2.game.geometry.Bounds;
 import my.projects.spacerangers2.game.geometry.Point2D;
 import my.projects.spacerangers2.game.geometry.Vector2D;
 import my.projects.spacerangers2.game.objects.AnimatedSpaceObject;
 
-public class Asteroid extends SpaceEntity<AnimatedSpaceObject> implements Aimable{
+public class Asteroid extends SpaceEntity<AnimatedSpaceObject>{
 
 	private AtomicInteger health;
 	private double speed;
@@ -26,6 +26,7 @@ public class Asteroid extends SpaceEntity<AnimatedSpaceObject> implements Aimabl
 		super(synchronizer, object);
 		health = new AtomicInteger();
 		velocity = Vector2D.randomDirection();
+		this.sceneSize = sceneSize;
 		this.aimableWatchList = aimableWatchList;
 	}
 
@@ -41,9 +42,13 @@ public class Asteroid extends SpaceEntity<AnimatedSpaceObject> implements Aimabl
 		this.damage = damage;
 	}
 	
+	public void setExplosion(Explosion explosion) {
+		this.explosion = explosion;
+	}
+	
 	@Override
 	protected void initializeObject() {
-		object.show();
+		Platform.runLater(() -> object.show());
 		velocity = Vector2D.scale(velocity, speed);
 	}
 
@@ -86,7 +91,7 @@ public class Asteroid extends SpaceEntity<AnimatedSpaceObject> implements Aimabl
 	@Override
 	protected void finalizeObject() {
 		aimableWatchList.remove(this);
-		object.hide();
+		Platform.runLater(()->object.hide());
 		if (explosion != null) {
 			launchExplosion();
 		}
@@ -101,18 +106,8 @@ public class Asteroid extends SpaceEntity<AnimatedSpaceObject> implements Aimabl
 	}
 
 	@Override
-	public Bounds getBounds() {
-		return object.getBounds();
-	}
-
-	@Override
-	public javafx.geometry.Bounds getApproximateBounds() {
-		return object.getApproximateBounds();
-	}
-
-	@Override
 	public void recieveDamage(double damage) {
-		health.getAndAdd((int)damage);
+		health.getAndAdd(-(int)damage);
 	}
 	
 	private class IfIntersectsDamagePerformer implements Consumer<Aimable> {
@@ -126,5 +121,4 @@ public class Asteroid extends SpaceEntity<AnimatedSpaceObject> implements Aimabl
 		}
 		
 	}
-
 }

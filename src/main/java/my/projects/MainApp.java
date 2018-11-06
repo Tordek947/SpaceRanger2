@@ -10,6 +10,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import my.projects.resources.ImagesBuilder;
+import my.projects.spacerangers2.game.scene.GameLevel;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,6 +53,8 @@ public class MainApp extends Application {
     }
 
 	protected void buildAndShowGameStage(Stage stage) {
-		
+		GameLevel gameLevel = new GameLevel(stage);
+		gameLevel.build();
+		gameLevel.start();
 	}
 }

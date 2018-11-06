@@ -6,7 +6,7 @@ public class Circle implements GeometricalPrimitive {
 	private double radius;
 	
 	
-	private Circle( double radius) {
+	public Circle( double radius) {
 		centralPoint = new Point2D();
 		this.radius = radius;
 	}

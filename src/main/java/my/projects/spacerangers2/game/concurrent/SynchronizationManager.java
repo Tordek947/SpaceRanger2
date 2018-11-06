@@ -4,5 +4,7 @@ public interface SynchronizationManager {
 	void pauseScene();
 	void resumeScene();
 	void disableScene();
+	void enableScene();
+	void sendAnimationTick();
 	void aquireAllDeadEnemyTokens();
 }

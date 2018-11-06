@@ -42,6 +42,11 @@ public class GameModuleSynchronizer implements EntitySynchronizable, Synchroniza
 	}
 
 	@Override
+	public void enableScene() {
+		sceneIsDisabled.set(false);
+	}
+
+	@Override
 	public void waitForSceneResume() {
 		synchronized(pause) {
 			try {
@@ -52,6 +57,13 @@ public class GameModuleSynchronizer implements EntitySynchronizable, Synchroniza
 		}
 	}
 
+	@Override
+	public void sendAnimationTick() {
+		synchronized(tickSynchronizer) {
+			tickSynchronizer.notifyAll();
+		}
+	}
+	
 	@Override
 	public void waitForAnimationTick() {
 		synchronized(tickSynchronizer) {
@@ -91,6 +103,7 @@ public class GameModuleSynchronizer implements EntitySynchronizable, Synchroniza
 	public void releaseAllDeadEntityTokens() {
 		gameModuleEntityWatcher.release(entityPermits);
 	}
+
 
 
 }
