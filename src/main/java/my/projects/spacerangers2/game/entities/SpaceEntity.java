@@ -7,7 +7,7 @@ import my.projects.spacerangers2.game.objects.SpaceObject;
 
 public abstract class SpaceEntity<T extends SpaceObject<?>> implements Runnable,  Aimable {
 	
-	private EntitySynchronizable synchronizer;
+	protected EntitySynchronizable synchronizer;
 	protected T object;
 	
 	public SpaceEntity(EntitySynchronizable synchronizer, T object) {
@@ -57,6 +57,13 @@ public abstract class SpaceEntity<T extends SpaceObject<?>> implements Runnable,
 		return 0;
 	}
 
+	protected void showObjectOnScene() {
+		Platform.runLater(()->object.show());
+	}
+	
+	protected void removeObjectFromScene() {
+		Platform.runLater(()->object.hide());
+	}
 
 	protected abstract void initializeObject();
 

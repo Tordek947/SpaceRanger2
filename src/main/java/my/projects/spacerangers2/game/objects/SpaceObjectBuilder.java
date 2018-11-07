@@ -16,4 +16,9 @@ public class SpaceObjectBuilder {
 		Appearance<SpriteAnimation> asteroidAppearance = Appearances.asteroidAppearance();
 		return new AnimatedSpaceObject(asteroidAppearance, representingStage);
 	}
+	
+	public AnimatedSpaceObject makeExplosionObject() {
+		Appearance<SpriteAnimation> appearance = Appearances.explosionAppearance();
+		return new AnimatedSpaceObject(appearance, representingStage);
+	}
 }

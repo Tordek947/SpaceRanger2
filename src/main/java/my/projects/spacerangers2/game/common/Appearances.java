@@ -30,4 +30,9 @@ public class Appearances {
 		 */
 		return new Appearance<SingleImageAnimation>(Animations.bulletSIA(),bounds );
 	}
+
+	public static Appearance<SpriteAnimation> explosionAppearance() {///
+		Bounds bounds = new Bounds();
+		return new Appearance<SpriteAnimation>(Animations.explosionSA(), bounds);
+	}
 }

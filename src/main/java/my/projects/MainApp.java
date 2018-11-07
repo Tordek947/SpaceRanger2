@@ -1,6 +1,7 @@
 package my.projects;
 
 import javafx.application.Application;
+import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
@@ -11,6 +12,8 @@ import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import my.projects.resources.ImagesBuilder;
 import my.projects.spacerangers2.game.scene.GameLevel;
+
+import java.util.concurrent.ExecutionException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,6 +58,24 @@ public class MainApp extends Application {
 	protected void buildAndShowGameStage(Stage stage) {
 		GameLevel gameLevel = new GameLevel(stage);
 		gameLevel.build();
-		gameLevel.start();
+		gameLevel.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+
+			@Override
+			public void handle(WorkerStateEvent event) {
+				try {
+					System.out.println("ShipIsAlive :"+gameLevel.get());
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (ExecutionException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			
+		});
+		Thread t = new Thread(gameLevel);
+		t.setDaemon(true);
+		t.start();
 	}
 }

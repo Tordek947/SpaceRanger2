@@ -20,12 +20,13 @@ public class MusicsBuilder {
 	}
 	
 	public InputStream get(StreamName name) {
-		if (!resourceMap.containsKey(name)) {
-			InputStream is = loadInputStream(name.path);
-			resourceMap.put(name, is);
-			return is;
-		}
-		return resourceMap.get(name);
+//		if (!resourceMap.containsKey(name)) {
+//			InputStream is = loadInputStream(name.path);
+//			resourceMap.put(name, is);
+//			return is;
+//		}
+//		return resourceMap.get(name);
+		return loadInputStream(name.path);
 	}
 	
 	private InputStream loadInputStream(String path) {

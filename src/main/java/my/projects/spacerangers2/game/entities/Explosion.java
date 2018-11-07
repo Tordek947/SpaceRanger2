@@ -22,8 +22,8 @@ public class Explosion extends UnpausableSpaceEntity<AnimatedSpaceObject> {
 	
 	@Override
 	protected void initializeObject() {
-		object.show();
 		explosionVoice.start();
+		showObjectOnScene();
 	}
 
 	@Override
@@ -47,7 +47,7 @@ public class Explosion extends UnpausableSpaceEntity<AnimatedSpaceObject> {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		object.hide();
+		removeObjectFromScene();
 		explosionVoice.close();
 	}
 

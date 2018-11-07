@@ -1,26 +1,26 @@
 package my.projects.spacerangers2.game.concurrent;
 
-import java.util.concurrent.Semaphore;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class GameModuleSynchronizer implements EntitySynchronizable, SynchronizationManager {
 
 	private Object tickSynchronizer;
 	private AtomicBoolean pause;
 	private AtomicBoolean sceneIsDisabled;
-	private Semaphore gameModuleEntityWatcher;
-	private int entityPermits;
+	private AtomicInteger aliveEnemies;
+	private AtomicBoolean shipIsAlive;
 	
 	public GameModuleSynchronizer() {
 		tickSynchronizer = new Object();
 		pause = new AtomicBoolean(true);
 		sceneIsDisabled = new AtomicBoolean(true);
-		this.entityPermits = 0;
-		gameModuleEntityWatcher = new Semaphore(0);
+		aliveEnemies = new AtomicInteger(0);
+		shipIsAlive = new AtomicBoolean(true);
 	}
 	
-	public void incrementTotalEntityPermits() {
-		this.entityPermits++;
+	public void incrementAliveEnemies() {
+		aliveEnemies.incrementAndGet();
 	}
 	
 	@Override
@@ -86,22 +86,32 @@ public class GameModuleSynchronizer implements EntitySynchronizable, Synchroniza
 	}
 
 	@Override
-	public void aquireAllDeadEnemyTokens() {
-		try {
-			gameModuleEntityWatcher.acquire(entityPermits);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
+	public boolean waitForModuleEndAndGetIsShipAlive() {
+		synchronized (shipIsAlive) {
+			try {
+				shipIsAlive.wait();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+		return shipIsAlive.get();
+	}
+
+	@Override
+	public void sendEnemyIsDead() {
+		if (aliveEnemies.decrementAndGet() == 0) {
+			synchronized (shipIsAlive) {
+				shipIsAlive.notify();
+			}
 		}
 	}
 
 	@Override
-	public void releaseDeadEntityToken() {
-		gameModuleEntityWatcher.release();
-	}
-
-	@Override
-	public void releaseAllDeadEntityTokens() {
-		gameModuleEntityWatcher.release(entityPermits);
+	public void sendUserShipIsDead() {
+		shipIsAlive.set(false);
+		synchronized (shipIsAlive) {
+			shipIsAlive.notify();
+		}
 	}
 
 

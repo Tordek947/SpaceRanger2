@@ -8,7 +8,7 @@ import java.util.function.Consumer;
 
 import my.projects.spacerangers2.game.entities.Aimable;
 
-public class AimableSkipList implements AimableList {
+public class AimableSkipList implements AimableModifiableList {
 
 	private SortedSet<Aimable> enemiesSet;
 	private Optional<Aimable> userShip;

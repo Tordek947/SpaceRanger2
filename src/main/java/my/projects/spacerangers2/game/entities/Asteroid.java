@@ -48,7 +48,7 @@ public class Asteroid extends SpaceEntity<AnimatedSpaceObject>{
 	
 	@Override
 	protected void initializeObject() {
-		Platform.runLater(() -> object.show());
+		showObjectOnScene();
 		velocity = Vector2D.scale(velocity, speed);
 	}
 
@@ -91,7 +91,8 @@ public class Asteroid extends SpaceEntity<AnimatedSpaceObject>{
 	@Override
 	protected void finalizeObject() {
 		aimableWatchList.remove(this);
-		Platform.runLater(()->object.hide());
+		removeObjectFromScene();
+		synchronizer.sendEnemyIsDead();
 		if (explosion != null) {
 			launchExplosion();
 		}

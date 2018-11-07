@@ -31,6 +31,16 @@ public abstract class UnpausableSpaceEntity<T extends SpaceObject<?>> implements
 		}
 		finalizeObject();
 	}
+	
+
+	protected void showObjectOnScene() {
+		Platform.runLater(()->object.show());
+	}
+	
+	protected void removeObjectFromScene() {
+		Platform.runLater(()->object.hide());
+	}
+
 
 	protected abstract void initializeObject();
 
