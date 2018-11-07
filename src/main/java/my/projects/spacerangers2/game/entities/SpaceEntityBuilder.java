@@ -37,7 +37,6 @@ public class SpaceEntityBuilder {
 		asteroid.setInitialPosition(left, top);
 		asteroid.setSpeed(speed);
 		asteroid.setExplosion(makeExplosion());
-		entitiesList.addAimableEnemy(asteroid);
 		gameModuleSynchronizer.incrementAliveEnemies();
 		return asteroid;
 	}

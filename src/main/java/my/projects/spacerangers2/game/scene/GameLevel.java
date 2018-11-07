@@ -21,7 +21,9 @@ import my.projects.spacerangers2.game.objects.SpaceObjectBuilder;
 public class GameLevel extends Task<Boolean>{
 	private Stage stage;
 	private SpaceEntityBuilder entityBuilder;
-	private Thread[] entityThreads;
+	private AimableModifiableList aimableList;
+	private Asteroid[] asteroids;
+	private Asteroid userShip;
 	
 	public GameLevel(Stage stage) {
 		this.stage = stage;
@@ -30,18 +32,18 @@ public class GameLevel extends Task<Boolean>{
 	public void build() {
 		BorderPane rootNode = new BorderPane();
 		Vector2D sceneSize = new Vector2D( 800, 600);
-		int n = 2000;
-		AimableModifiableList aimableList = new AimableSkipList();
+		int n = 75;
+		aimableList = new AimableSkipList();
 		SpaceObjectBuilder objectBuilder = new SpaceObjectBuilder(rootNode); 
 		entityBuilder = new SpaceEntityBuilder(sceneSize, aimableList, objectBuilder);
-		entityThreads = new Thread[n];
+		asteroids = new Asteroid[n];
 		for(int i = 0;i<n;i++) {
 			double left = Math.random()*(sceneSize.x-50);
 			double right = Math.random()*(sceneSize.y-50);
 			double speed = Math.random()*10 + 2;
-			Asteroid asteroid = entityBuilder.makeAsteroid(left, right, speed, 5, 1000);
-			entityThreads[i] = new Thread(asteroid);
+			asteroids[i] = entityBuilder.makeAsteroid(left, right, speed, 50, 1000);
 		}
+//		userShip = entityBuilder.makeUserShip();
 		
         Scene scene = new Scene(rootNode, sceneSize.x, sceneSize.y);
 //        scene.getStylesheets().add("/styles/styles.css");
@@ -50,7 +52,9 @@ public class GameLevel extends Task<Boolean>{
 		
 	}
 
-	public Boolean start() {
+
+	@Override
+	protected Boolean call() throws Exception {
 		SynchronizationManager manager = entityBuilder.getSynchronizationManager();
 		
 		AnimationTimer at = new AnimationTimer() {
@@ -65,24 +69,24 @@ public class GameLevel extends Task<Boolean>{
 		manager.enableScene();
 		at.start();
 		manager.resumeScene();
-		for(Thread t : entityThreads) {
+		for(Asteroid e : asteroids) {
+			Thread t = new Thread(e);
 			t.setDaemon(true);
 			t.start();
 			try {
-				TimeUnit.MILLISECONDS.sleep((long)(Math.random()*20) + 20);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
+				TimeUnit.MILLISECONDS.sleep((long)(Math.random()*200) + 200);
+			} catch (InterruptedException ex) {
+				ex.printStackTrace();
 			}
 		}
+//		Thread t = new Thread(userShip);
+//		t.setDaemon(true);
+//		aimableList.setAimableUserShip(userShip);
+//		t.start();
 		
 		boolean shipIsAlive = manager.waitForModuleEndAndGetIsShipAlive();
 		backgroundMusic.stop();
 		backgroundMusic.close();
 		return shipIsAlive;
-	}
-
-	@Override
-	protected Boolean call() throws Exception {
-		return start();
 	}
 }

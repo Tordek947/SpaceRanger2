@@ -5,6 +5,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
 import javafx.application.Platform;
+import my.projects.spacerangers2.game.concurrent.AimableModifiableList;
 import my.projects.spacerangers2.game.concurrent.AimableWatchList;
 import my.projects.spacerangers2.game.concurrent.EntitySynchronizable;
 import my.projects.spacerangers2.game.geometry.Point2D;
@@ -19,15 +20,15 @@ public class Asteroid extends SpaceEntity<AnimatedSpaceObject>{
 	private Vector2D velocity;
 	private Vector2D sceneSize;
 	private Explosion explosion;
-	private AimableWatchList aimableWatchList;
+	private AimableModifiableList aimableList;
 	
 	public Asteroid(Vector2D sceneSize, EntitySynchronizable synchronizer, AnimatedSpaceObject object,
-			AimableWatchList aimableWatchList) {
+			AimableModifiableList aimableList) {
 		super(synchronizer, object);
 		health = new AtomicInteger();
 		velocity = Vector2D.randomDirection();
 		this.sceneSize = sceneSize;
-		this.aimableWatchList = aimableWatchList;
+		this.aimableList = aimableList;
 	}
 
 	public void setHealth(int health) {
@@ -49,6 +50,7 @@ public class Asteroid extends SpaceEntity<AnimatedSpaceObject>{
 	@Override
 	protected void initializeObject() {
 		showObjectOnScene();
+		aimableList.addAimableEnemy(this);
 		velocity = Vector2D.scale(velocity, speed);
 	}
 
@@ -62,12 +64,12 @@ public class Asteroid extends SpaceEntity<AnimatedSpaceObject>{
 
 	@Override
 	protected void performLifecycleIteration() {
-		Optional<Aimable> userShipBounds = aimableWatchList.getUserShip();
+		Optional<Aimable> userShipBounds = aimableList.getUserShip();
 		userShipBounds.ifPresent(new IfIntersectsDamagePerformer());
 		computeNextState();
 	}
 
-	private void computeNextState() {
+	protected void computeNextState() {
 		computeVelocity();
 		health.decrementAndGet();//
 		object.moveByVector(velocity);
@@ -90,7 +92,7 @@ public class Asteroid extends SpaceEntity<AnimatedSpaceObject>{
 
 	@Override
 	protected void finalizeObject() {
-		aimableWatchList.remove(this);
+		aimableList.remove(this);
 		removeObjectFromScene();
 		synchronizer.sendEnemyIsDead();
 		if (explosion != null) {
@@ -118,8 +120,23 @@ public class Asteroid extends SpaceEntity<AnimatedSpaceObject>{
 			if (t.getApproximateBounds().intersects(object.getApproximateBounds()) && 
 					t.getBounds().intersect(object.getBounds())) {
 				t.recieveDamage(damage);
+				System.out.println(this + " perform damage "+damage+" to userShip " + t);
+				translateVelocityAwayFromEnemy(t);
 			}
 		}
 		
+	}
+
+	private void translateVelocityAwayFromEnemy(Aimable t) {
+		Point2D tCenter = makeCentralPointFromAimable(t);
+		Point2D thisCenter = makeCentralPointFromAimable(this);
+		velocity = Vector2D.scale(Vector2D.ortFromPoints(tCenter, thisCenter), speed);
+	}
+
+	private Point2D makeCentralPointFromAimable(Aimable t) {
+		javafx.geometry.Bounds b = t.getApproximateBounds();
+		double x = b.getMinX() + b.getWidth()/2;
+		double y = b.getMinY() + b.getHeight()/2;
+		return new Point2D(x,y);
 	}
 }
