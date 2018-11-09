@@ -6,6 +6,7 @@ import javafx.animation.AnimationTimer;
 import javafx.concurrent.Task;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import my.projects.resources.MusicsBuilder;
 import my.projects.resources.MusicsBuilder.StreamName;
@@ -32,7 +33,7 @@ public class GameLevel extends Task<Boolean>{
 
 	public void build() {
         backgroundMusic = new Voice(MusicsBuilder.getInstance().get(StreamName.LONG_WAY_BALLADE));
-		BorderPane rootNode = new BorderPane();
+		Pane rootNode = new BorderPane();
 		Vector2D sceneSize = new Vector2D( 800, 600);
 		int n = 500;
 		aimableList = new AimableSkipList();
