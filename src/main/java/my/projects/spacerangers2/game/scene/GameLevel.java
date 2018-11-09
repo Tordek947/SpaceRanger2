@@ -24,15 +24,17 @@ public class GameLevel extends Task<Boolean>{
 	private AimableModifiableList aimableList;
 	private Asteroid[] asteroids;
 	private Asteroid userShip;
+	private Voice backgroundMusic;
 	
 	public GameLevel(Stage stage) {
 		this.stage = stage;
 	}
 
 	public void build() {
+        backgroundMusic = new Voice(MusicsBuilder.getInstance().get(StreamName.LONG_WAY_BALLADE));
 		BorderPane rootNode = new BorderPane();
 		Vector2D sceneSize = new Vector2D( 800, 600);
-		int n = 75;
+		int n = 500;
 		aimableList = new AimableSkipList();
 		SpaceObjectBuilder objectBuilder = new SpaceObjectBuilder(rootNode); 
 		entityBuilder = new SpaceEntityBuilder(sceneSize, aimableList, objectBuilder);
@@ -41,22 +43,22 @@ public class GameLevel extends Task<Boolean>{
 			double left = Math.random()*(sceneSize.x-50);
 			double right = Math.random()*(sceneSize.y-50);
 			double speed = Math.random()*10 + 2;
-			asteroids[i] = entityBuilder.makeAsteroid(left, right, speed, 50, 1000);
+			asteroids[i] = entityBuilder.makeAsteroid(left, right, speed, 50, 500);
 		}
 //		userShip = entityBuilder.makeUserShip();
-		
+
         Scene scene = new Scene(rootNode, sceneSize.x, sceneSize.y);
 //        scene.getStylesheets().add("/styles/styles.css");
         stage.setScene(scene);
+        stage.setTitle("SpaceRanger 2.0");
         stage.show();
-		
+		backgroundMusic.startContinuousPlaying();
 	}
 
 
 	@Override
 	protected Boolean call() throws Exception {
 		SynchronizationManager manager = entityBuilder.getSynchronizationManager();
-		
 		AnimationTimer at = new AnimationTimer() {
 
 			@Override
@@ -64,8 +66,7 @@ public class GameLevel extends Task<Boolean>{
 				manager.sendAnimationTick();
 			}
 		};
-		Voice backgroundMusic = new Voice(MusicsBuilder.getInstance().get(StreamName.LONG_WAY_BALLADE));
-		backgroundMusic.startContinuousPlaying();
+		
 		manager.enableScene();
 		at.start();
 		manager.resumeScene();
@@ -74,7 +75,7 @@ public class GameLevel extends Task<Boolean>{
 			t.setDaemon(true);
 			t.start();
 			try {
-				TimeUnit.MILLISECONDS.sleep((long)(Math.random()*200) + 200);
+				TimeUnit.MILLISECONDS.sleep((long)(Math.random()*200) + 800);
 			} catch (InterruptedException ex) {
 				ex.printStackTrace();
 			}
@@ -84,7 +85,8 @@ public class GameLevel extends Task<Boolean>{
 //		aimableList.setAimableUserShip(userShip);
 //		t.start();
 		
-		boolean shipIsAlive = manager.waitForModuleEndAndGetIsShipAlive();
+		boolean shipIsAlive = manager.waitForFightEndAndGetIsShipAlive();
+		manager.disableScene();
 		backgroundMusic.stop();
 		backgroundMusic.close();
 		return shipIsAlive;

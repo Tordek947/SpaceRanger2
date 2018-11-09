@@ -4,6 +4,7 @@ import java.util.concurrent.Semaphore;
 
 import my.projects.spacerangers2.game.common.Voice;
 import my.projects.spacerangers2.game.concurrent.EntitySynchronizable;
+import my.projects.spacerangers2.game.concurrent.WarriorSynchronizable;
 import my.projects.spacerangers2.game.objects.AnimatedSpaceObject;
 
 public class Explosion extends UnpausableSpaceEntity<AnimatedSpaceObject> {
@@ -11,8 +12,9 @@ public class Explosion extends UnpausableSpaceEntity<AnimatedSpaceObject> {
 	private Voice explosionVoice;
 	private Semaphore voiceSemaphore;
 	private boolean animationInProgress;
+	private boolean isLastExplosion;
 	
-	public Explosion(EntitySynchronizable synchronizer, AnimatedSpaceObject object, Voice explosionVoice) {
+	public Explosion(WarriorSynchronizable synchronizer, AnimatedSpaceObject object, Voice explosionVoice) {
 		super(synchronizer, object);
 		this.explosionVoice = explosionVoice;
 		voiceSemaphore = new Semaphore(0);
@@ -49,6 +51,13 @@ public class Explosion extends UnpausableSpaceEntity<AnimatedSpaceObject> {
 		}
 		removeObjectFromScene();
 		explosionVoice.close();
+		if (isLastExplosion) {
+			synchronizer.sendFightIsFinished();
+		}
+	}
+
+	public void setLast(boolean isLastExplosion) {
+		this.isLastExplosion = isLastExplosion;
 	}
 
 }

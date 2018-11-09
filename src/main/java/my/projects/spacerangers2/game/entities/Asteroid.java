@@ -8,21 +8,25 @@ import javafx.application.Platform;
 import my.projects.spacerangers2.game.concurrent.AimableModifiableList;
 import my.projects.spacerangers2.game.concurrent.AimableWatchList;
 import my.projects.spacerangers2.game.concurrent.EntitySynchronizable;
+import my.projects.spacerangers2.game.concurrent.GameModuleSynchronizer;
+import my.projects.spacerangers2.game.concurrent.WarriorSynchronizable;
 import my.projects.spacerangers2.game.geometry.Point2D;
 import my.projects.spacerangers2.game.geometry.Vector2D;
 import my.projects.spacerangers2.game.objects.AnimatedSpaceObject;
+import my.projects.spacerangers2.game.objects.Boundable;
 
-public class Asteroid extends SpaceEntity<AnimatedSpaceObject>{
-
+public class Asteroid extends ExplodableEntity<AnimatedSpaceObject, WarriorSynchronizable> implements Aimable{
+	
+	
 	private AtomicInteger health;
 	private double speed;
 	private double damage;
 	private Vector2D velocity;
 	private Vector2D sceneSize;
-	private Explosion explosion;
 	private AimableModifiableList aimableList;
+	private Consumer<Aimable> ifIntersectsHitPerformer;
 	
-	public Asteroid(Vector2D sceneSize, EntitySynchronizable synchronizer, AnimatedSpaceObject object,
+	public Asteroid(Vector2D sceneSize, WarriorSynchronizable synchronizer, AnimatedSpaceObject object,
 			AimableModifiableList aimableList) {
 		super(synchronizer, object);
 		health = new AtomicInteger();
@@ -43,14 +47,11 @@ public class Asteroid extends SpaceEntity<AnimatedSpaceObject>{
 		this.damage = damage;
 	}
 	
-	public void setExplosion(Explosion explosion) {
-		this.explosion = explosion;
-	}
-	
 	@Override
 	protected void initializeObject() {
 		showObjectOnScene();
 		aimableList.addAimableEnemy(this);
+		ifIntersectsHitPerformer = new IfIntersectsHitPerformer();
 		velocity = Vector2D.scale(velocity, speed);
 	}
 
@@ -65,7 +66,7 @@ public class Asteroid extends SpaceEntity<AnimatedSpaceObject>{
 	@Override
 	protected void performLifecycleIteration() {
 		Optional<Aimable> userShipBounds = aimableList.getUserShip();
-		userShipBounds.ifPresent(new IfIntersectsDamagePerformer());
+		userShipBounds.ifPresent(ifIntersectsHitPerformer);
 		computeNextState();
 	}
 
@@ -94,33 +95,23 @@ public class Asteroid extends SpaceEntity<AnimatedSpaceObject>{
 	protected void finalizeObject() {
 		aimableList.remove(this);
 		removeObjectFromScene();
-		synchronizer.sendEnemyIsDead();
-		if (explosion != null) {
-			launchExplosion();
-		}
+		boolean lastEnemy = synchronizer.enemyDyingIsLast();
+		launchExplosionIfPresent(lastEnemy);
 	}
 
-	private void launchExplosion() {
-		Point2D centerPoint = object.getCenterPosition();
-		explosion.object.setCenterPosition(centerPoint);
-		Thread t = new Thread(explosion);
-		t.setDaemon(true);
-		t.start();
-	}
 
 	@Override
 	public void recieveDamage(double damage) {
 		health.getAndAdd(-(int)damage);
 	}
 	
-	private class IfIntersectsDamagePerformer implements Consumer<Aimable> {
+	private class IfIntersectsHitPerformer implements Consumer<Aimable> {
 
 		@Override
 		public void accept(Aimable t) {
 			if (t.getApproximateBounds().intersects(object.getApproximateBounds()) && 
 					t.getBounds().intersect(object.getBounds())) {
 				t.recieveDamage(damage);
-				System.out.println(this + " perform damage "+damage+" to userShip " + t);
 				translateVelocityAwayFromEnemy(t);
 			}
 		}

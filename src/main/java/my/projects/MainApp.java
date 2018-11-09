@@ -1,13 +1,17 @@
 package my.projects;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.event.EventType;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import my.projects.resources.ImagesBuilder;
@@ -27,32 +31,7 @@ public class MainApp extends Application {
     }
 
     public void start(Stage stage) throws Exception {
-
-        log.info("Starting Hello JavaFX and Maven demonstration application");
-
-        GridPane rootNode = new GridPane();
-        Button start = new Button("Play test!");
-        start.setOnAction(new EventHandler<ActionEvent>() {
-
-			public void handle(ActionEvent event) {
-				buildAndShowGameStage(stage);
-			}
-        	
-        });
-        rootNode.add(start, 0, 0);
-        ImageView window = new ImageView();
-        ImagesBuilder ib = ImagesBuilder.getInstance();
-        Image img = ib.getWeaponImage();
-        window.setImage(img);
-        rootNode.add(window, 0, 1);
-
-        log.debug("Showing JFX scene");
-        Scene scene = new Scene(rootNode, 400, 200);
-        scene.getStylesheets().add("/styles/styles.css");
-        
-        stage.setTitle("SpaceRanger 2.0");
-        stage.setScene(scene);
-        stage.show();
+		buildAndShowGameStage(stage);
     }
 
 	protected void buildAndShowGameStage(Stage stage) {
@@ -64,6 +43,7 @@ public class MainApp extends Application {
 			public void handle(WorkerStateEvent event) {
 				try {
 					System.out.println("ShipIsAlive :"+gameLevel.get());
+					Platform.exit();
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -76,6 +56,16 @@ public class MainApp extends Application {
 		});
 		Thread t = new Thread(gameLevel);
 		t.setDaemon(true);
-		t.start();
+        EventType<KeyEvent> eType = KeyEvent.KEY_PRESSED;
+		stage.addEventHandler(eType, new EventHandler<KeyEvent>() {
+			@Override
+			public void handle(KeyEvent event) {
+				if (event.getCode() ==  KeyCode.SPACE) {
+					stage.removeEventHandler(eType, this);
+					t.start();
+				}
+			}
+			
+		});
 	}
 }

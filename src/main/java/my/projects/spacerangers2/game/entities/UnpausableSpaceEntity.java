@@ -2,14 +2,15 @@ package my.projects.spacerangers2.game.entities;
 
 import javafx.application.Platform;
 import my.projects.spacerangers2.game.concurrent.EntitySynchronizable;
+import my.projects.spacerangers2.game.concurrent.WarriorSynchronizable;
 import my.projects.spacerangers2.game.objects.SpaceObject;
 
 public abstract class UnpausableSpaceEntity<T extends SpaceObject<?>> implements Runnable {
 	
-	private EntitySynchronizable synchronizer;
+	protected WarriorSynchronizable synchronizer;
 	protected T object;
 	
-	public UnpausableSpaceEntity(EntitySynchronizable synchronizer, T object) {
+	public UnpausableSpaceEntity(WarriorSynchronizable synchronizer, T object) {
 		this.synchronizer = synchronizer;
 		this.object = object;
 	}

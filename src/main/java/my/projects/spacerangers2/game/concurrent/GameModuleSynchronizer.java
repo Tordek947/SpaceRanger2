@@ -3,7 +3,7 @@ package my.projects.spacerangers2.game.concurrent;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class GameModuleSynchronizer implements EntitySynchronizable, SynchronizationManager {
+public class GameModuleSynchronizer implements WarriorSynchronizable, SynchronizationManager {
 
 	private Object tickSynchronizer;
 	private AtomicBoolean pause;
@@ -86,7 +86,7 @@ public class GameModuleSynchronizer implements EntitySynchronizable, Synchroniza
 	}
 
 	@Override
-	public boolean waitForModuleEndAndGetIsShipAlive() {
+	public boolean waitForFightEndAndGetIsShipAlive() {
 		synchronized (shipIsAlive) {
 			try {
 				shipIsAlive.wait();
@@ -98,17 +98,20 @@ public class GameModuleSynchronizer implements EntitySynchronizable, Synchroniza
 	}
 
 	@Override
-	public void sendEnemyIsDead() {
+	public boolean enemyDyingIsLast() {
 		if (aliveEnemies.decrementAndGet() == 0) {
-			synchronized (shipIsAlive) {
-				shipIsAlive.notify();
-			}
+			return true;
 		}
+		return false;
 	}
 
 	@Override
-	public void sendUserShipIsDead() {
+	public void userShipDying() {
 		shipIsAlive.set(false);
+	}
+
+	@Override
+	public void sendFightIsFinished() {
 		synchronized (shipIsAlive) {
 			shipIsAlive.notify();
 		}

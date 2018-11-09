@@ -6,5 +6,5 @@ public interface SynchronizationManager {
 	void disableScene();
 	void enableScene();
 	void sendAnimationTick();
-	boolean waitForModuleEndAndGetIsShipAlive();
+	boolean waitForFightEndAndGetIsShipAlive();
 }

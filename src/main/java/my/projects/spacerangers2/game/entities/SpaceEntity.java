@@ -3,14 +3,16 @@ package my.projects.spacerangers2.game.entities;
 import javafx.application.Platform;
 import my.projects.spacerangers2.game.concurrent.EntitySynchronizable;
 import my.projects.spacerangers2.game.geometry.Bounds;
+import my.projects.spacerangers2.game.objects.Boundable;
 import my.projects.spacerangers2.game.objects.SpaceObject;
 
-public abstract class SpaceEntity<T extends SpaceObject<?>> implements Runnable,  Aimable {
+public abstract class SpaceEntity<T extends SpaceObject<?>, S extends EntitySynchronizable> implements Runnable,  Boundable,
+	Comparable<Object> {
 	
-	protected EntitySynchronizable synchronizer;
+	protected S synchronizer;
 	protected T object;
 	
-	public SpaceEntity(EntitySynchronizable synchronizer, T object) {
+	public SpaceEntity(S synchronizer, T object) {
 		this.synchronizer = synchronizer;
 		this.object = object;
 	}

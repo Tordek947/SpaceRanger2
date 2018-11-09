@@ -5,6 +5,4 @@ public interface EntitySynchronizable{
 	void waitForAnimationTick();
 	boolean isScenePause();
 	boolean isSceneDisabled();
-	void sendEnemyIsDead();
-	void sendUserShipIsDead();
 }
