@@ -1,6 +1,5 @@
 package my.projects.spacerangers2.game.scene;
 
-import java.util.concurrent.TimeUnit;
 
 import javafx.animation.AnimationTimer;
 import javafx.concurrent.Task;
@@ -13,19 +12,17 @@ import my.projects.resources.MusicsBuilder.StreamName;
 import my.projects.spacerangers2.game.common.Voice;
 import my.projects.spacerangers2.game.concurrent.AimableModifiableList;
 import my.projects.spacerangers2.game.concurrent.AimableSkipList;
-import my.projects.spacerangers2.game.concurrent.SynchronizationManager;
-import my.projects.spacerangers2.game.entities.Asteroid;
-import my.projects.spacerangers2.game.entities.SpaceEntityBuilder;
+import my.projects.spacerangers2.game.concurrent.GameLevelSynchronizer;
+import my.projects.spacerangers2.game.entities.SpaceEntityCreator;
 import my.projects.spacerangers2.game.geometry.Vector2D;
 import my.projects.spacerangers2.game.objects.SpaceObjectBuilder;
 
 public class GameLevel extends Task<Boolean>{
 	private Stage stage;
-	private SpaceEntityBuilder entityBuilder;
-	private AimableModifiableList aimableList;
-	private Asteroid[] asteroids;
-	private Asteroid userShip;
 	private Voice backgroundMusic;
+	private GameLevelSynchronizer levelSynchronizer;
+	private GameModule[] gameModules;
+	private int modulesCount;
 	
 	public GameLevel(Stage stage) {
 		this.stage = stage;
@@ -35,21 +32,16 @@ public class GameLevel extends Task<Boolean>{
         backgroundMusic = new Voice(MusicsBuilder.getInstance().get(StreamName.LONG_WAY_BALLADE));
 		Pane rootNode = new BorderPane();
 		Vector2D sceneSize = new Vector2D( 800, 600);
-		int n = 500;
-		aimableList = new AimableSkipList();
-		SpaceObjectBuilder objectBuilder = new SpaceObjectBuilder(rootNode); 
-		entityBuilder = new SpaceEntityBuilder(sceneSize, aimableList, objectBuilder);
-		asteroids = new Asteroid[n];
-		for(int i = 0;i<n;i++) {
-			double left = Math.random()*(sceneSize.x-50);
-			double right = Math.random()*(sceneSize.y-50);
-			double speed = Math.random()*10 + 2;
-			asteroids[i] = entityBuilder.makeAsteroid(left, right, speed, 50, 500);
-		}
-//		userShip = entityBuilder.makeUserShip();
-
+		levelSynchronizer = new GameLevelSynchronizer();
+		AimableModifiableList aimableList = new AimableSkipList();
+		SpaceObjectBuilder objectBuilder = new SpaceObjectBuilder(rootNode);
+		modulesCount = 2;
+		gameModules = new GameModule[modulesCount];
         Scene scene = new Scene(rootNode, sceneSize.x, sceneSize.y);
 //        scene.getStylesheets().add("/styles/styles.css");
+        gameModules[0] = new TestModule(sceneSize, new SpaceEntityCreator(sceneSize, aimableList, objectBuilder, levelSynchronizer));
+        gameModules[1] = new TestModule(sceneSize, new SpaceEntityCreator(sceneSize, aimableList, objectBuilder, levelSynchronizer));
+        gameModules[0].build();
         stage.setScene(scene);
         stage.setTitle("SpaceRanger 2.0");
         stage.show();
@@ -59,37 +51,32 @@ public class GameLevel extends Task<Boolean>{
 
 	@Override
 	protected Boolean call() throws Exception {
-		SynchronizationManager manager = entityBuilder.getSynchronizationManager();
 		AnimationTimer at = new AnimationTimer() {
 
 			@Override
 			public void handle(long now) {
-				manager.sendAnimationTick();
+				levelSynchronizer.sendAnimationTick();
 			}
 		};
 		
-		manager.enableScene();
+		levelSynchronizer.enableScene();
 		at.start();
-		manager.resumeScene();
-		for(Asteroid e : asteroids) {
-			Thread t = new Thread(e);
-			t.setDaemon(true);
-			t.start();
-			try {
-				TimeUnit.MILLISECONDS.sleep((long)(Math.random()*200) + 800);
-			} catch (InterruptedException ex) {
-				ex.printStackTrace();
+		levelSynchronizer.resumeScene();
+		for(int i = 0;i<modulesCount-1;i++) {
+			gameModules[i+1].buildInBackground();
+			gameModules[i].execute();
+			if (gameModules[i].isShipAlive() == false) {
+				return levelFinishing(false);
 			}
 		}
-//		Thread t = new Thread(userShip);
-//		t.setDaemon(true);
-//		aimableList.setAimableUserShip(userShip);
-//		t.start();
-		
-		boolean shipIsAlive = manager.waitForFightEndAndGetIsShipAlive();
-		manager.disableScene();
+		gameModules[modulesCount-1].execute();
+		return levelFinishing(gameModules[modulesCount-1].isShipAlive());
+	}
+
+	private boolean levelFinishing(boolean isShipAlive) {
+		levelSynchronizer.disableScene();
 		backgroundMusic.stop();
 		backgroundMusic.close();
-		return shipIsAlive;
+		return isShipAlive;
 	}
 }

@@ -7,15 +7,15 @@ import java.util.function.Consumer;
 import javafx.application.Platform;
 import my.projects.spacerangers2.game.concurrent.AimableModifiableList;
 import my.projects.spacerangers2.game.concurrent.AimableWatchList;
-import my.projects.spacerangers2.game.concurrent.EntitySynchronizable;
-import my.projects.spacerangers2.game.concurrent.GameModuleSynchronizer;
-import my.projects.spacerangers2.game.concurrent.WarriorSynchronizable;
+import my.projects.spacerangers2.game.concurrent.LevelEntitySynchronizable;
+import my.projects.spacerangers2.game.concurrent.GameLevelSynchronizer;
+import my.projects.spacerangers2.game.concurrent.ModuleWarriorSynchronizable;
 import my.projects.spacerangers2.game.geometry.Point2D;
 import my.projects.spacerangers2.game.geometry.Vector2D;
 import my.projects.spacerangers2.game.objects.AnimatedSpaceObject;
 import my.projects.spacerangers2.game.objects.Boundable;
 
-public class Asteroid extends ExplodableEntity<AnimatedSpaceObject, WarriorSynchronizable> implements Aimable{
+public class Asteroid extends ExplodableEntity<AnimatedSpaceObject> implements Aimable{
 	
 	
 	private AtomicInteger health;
@@ -25,14 +25,16 @@ public class Asteroid extends ExplodableEntity<AnimatedSpaceObject, WarriorSynch
 	private Vector2D sceneSize;
 	private AimableModifiableList aimableList;
 	private Consumer<Aimable> ifIntersectsHitPerformer;
+	private ModuleWarriorSynchronizable warriorSynchronizer;
 	
-	public Asteroid(Vector2D sceneSize, WarriorSynchronizable synchronizer, AnimatedSpaceObject object,
-			AimableModifiableList aimableList) {
+	public Asteroid(Vector2D sceneSize,LevelEntitySynchronizable synchronizer , AnimatedSpaceObject object,
+			AimableModifiableList aimableList, ModuleWarriorSynchronizable warriorSynchronizer) {
 		super(synchronizer, object);
 		health = new AtomicInteger();
 		velocity = Vector2D.randomDirection();
 		this.sceneSize = sceneSize;
 		this.aimableList = aimableList;
+		this.warriorSynchronizer = warriorSynchronizer;
 	}
 
 	public void setHealth(int health) {
@@ -95,8 +97,8 @@ public class Asteroid extends ExplodableEntity<AnimatedSpaceObject, WarriorSynch
 	protected void finalizeObject() {
 		aimableList.remove(this);
 		removeObjectFromScene();
-		boolean lastEnemy = synchronizer.enemyDyingIsLast();
-		launchExplosionIfPresent(lastEnemy);
+		boolean isLastEnemy = warriorSynchronizer.enemyDyingIsLast();
+		launchExplosionIfPresent(isLastEnemy);
 	}
 
 

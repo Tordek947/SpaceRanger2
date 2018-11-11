@@ -5,11 +5,11 @@ import java.util.Optional;
 import java.util.function.Consumer;
 
 import my.projects.spacerangers2.game.concurrent.AimableWatchList;
-import my.projects.spacerangers2.game.concurrent.EntitySynchronizable;
+import my.projects.spacerangers2.game.concurrent.LevelEntitySynchronizable;
 import my.projects.spacerangers2.game.geometry.Vector2D;
 import my.projects.spacerangers2.game.objects.SimpleSpaceObject;
 
-public class Bullet extends ExplodableEntity<SimpleSpaceObject, EntitySynchronizable> {
+public class Bullet extends ExplodableEntity<SimpleSpaceObject> {
 	
 	private double speed;
 	private double damage;
@@ -20,7 +20,7 @@ public class Bullet extends ExplodableEntity<SimpleSpaceObject, EntitySynchroniz
 	private AimableWatchList aimableList;
 	private Consumer<Aimable> ifIntersectsHitPerformer;
 	
-	public Bullet(Vector2D sceneSize, EntitySynchronizable synchronizer, SimpleSpaceObject object,
+	public Bullet(Vector2D sceneSize, LevelEntitySynchronizable synchronizer, SimpleSpaceObject object,
 			AimableWatchList aimableList) {
 		super(synchronizer, object);
 		this.sceneSize = sceneSize;

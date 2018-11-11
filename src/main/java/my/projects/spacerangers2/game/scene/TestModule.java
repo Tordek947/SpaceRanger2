@@ -2,23 +2,24 @@ package my.projects.spacerangers2.game.scene;
 
 import java.util.concurrent.TimeUnit;
 
-import javafx.scene.layout.Pane;
-import my.projects.spacerangers2.game.concurrent.AimableModifiableList;
-import my.projects.spacerangers2.game.concurrent.SynchronizationManager;
+import my.projects.spacerangers2.game.concurrent.LevelSynchronizationManager;
+import my.projects.spacerangers2.game.concurrent.ModuleSynchronizationManager;
 import my.projects.spacerangers2.game.entities.Asteroid;
+import my.projects.spacerangers2.game.entities.SpaceEntityCreator;
 import my.projects.spacerangers2.game.geometry.Vector2D;
 
 public class TestModule extends GameModule {
 
-	private Asteroid asteroids[];
 
-	public TestModule(Pane rootNode, Vector2D sceneSize, AimableModifiableList aimableList) {
-		super(rootNode, sceneSize, aimableList);
+	private Asteroid asteroids[];
+	
+	public TestModule(Vector2D sceneSize, SpaceEntityCreator entityBuilder) {
+		super(sceneSize, entityBuilder);
 	}
 
 	@Override
 	protected void buildLogic() {
-		int n = 500;
+		int n = 5;
 		asteroids = new Asteroid[n];
 		for(int i = 0;i<n;i++) {
 			double left = Math.random()*(sceneSize.x-50);
@@ -30,7 +31,7 @@ public class TestModule extends GameModule {
 
 	@Override
 	protected void executeLogic() {
-		SynchronizationManager manager = entityBuilder.getSynchronizationManager();
+		ModuleSynchronizationManager manager = entityBuilder.getModuleSynchronizationManager();
 		
 		for(Asteroid e : asteroids) {
 			Thread t = new Thread(e);
@@ -42,8 +43,7 @@ public class TestModule extends GameModule {
 				ex.printStackTrace();
 			}
 		}
-		
-		boolean shipIsAlive = manager.waitForFightEndAndGetIsShipAlive();
+		manager.waitForFightEnd();
 	}
 
 }

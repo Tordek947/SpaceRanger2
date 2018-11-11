@@ -1,14 +1,14 @@
 package my.projects.spacerangers2.game.entities;
 
-import my.projects.spacerangers2.game.concurrent.EntitySynchronizable;
+import my.projects.spacerangers2.game.concurrent.LevelEntitySynchronizable;
 import my.projects.spacerangers2.game.geometry.Point2D;
 import my.projects.spacerangers2.game.objects.SpaceObject;
 
-public abstract class ExplodableEntity<T extends SpaceObject<?>, S extends EntitySynchronizable> extends SpaceEntity<T, S>{
+public abstract class ExplodableEntity<T extends SpaceObject<?>> extends SpaceEntity<T>{
 
 	private Explosion explosion;
 	
-	public ExplodableEntity(S synchronizer, T object) {
+	public ExplodableEntity(LevelEntitySynchronizable synchronizer, T object) {
 		super(synchronizer, object);
 	}
 

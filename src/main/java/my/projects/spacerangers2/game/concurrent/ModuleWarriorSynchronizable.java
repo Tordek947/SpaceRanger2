@@ -1,6 +1,6 @@
 package my.projects.spacerangers2.game.concurrent;
 
-public interface WarriorSynchronizable extends EntitySynchronizable {
+public interface ModuleWarriorSynchronizable {
 	boolean enemyDyingIsLast();
 	void userShipDying();
 	void sendFightIsFinished();

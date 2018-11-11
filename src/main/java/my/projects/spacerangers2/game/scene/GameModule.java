@@ -3,24 +3,22 @@ package my.projects.spacerangers2.game.scene;
 import java.util.concurrent.Semaphore;
 import javafx.scene.layout.Pane;
 import my.projects.spacerangers2.game.concurrent.AimableModifiableList;
-import my.projects.spacerangers2.game.entities.SpaceEntityBuilder;
+import my.projects.spacerangers2.game.concurrent.GameLevelSynchronizer;
+import my.projects.spacerangers2.game.entities.SpaceEntityCreator;
 import my.projects.spacerangers2.game.geometry.Vector2D;
 import my.projects.spacerangers2.game.objects.SpaceObjectBuilder;
 
 public abstract class GameModule {
 	private Semaphore buildSynchronizer;
 	private volatile BuildState buildState;
-	protected SpaceEntityBuilder entityBuilder;
+	protected SpaceEntityCreator entityBuilder;
 	protected Vector2D sceneSize;
-	protected boolean shipIsAlive;
 	
-	public GameModule(Pane rootNode, Vector2D sceneSize, AimableModifiableList aimableList) {
+	public GameModule(Vector2D sceneSize, SpaceEntityCreator entityBuilder) {
 		buildSynchronizer = new Semaphore(0);
 		buildState = BuildState.NOT_STARTED;
-		SpaceObjectBuilder objectBuilder = new SpaceObjectBuilder(rootNode);
-		entityBuilder = new SpaceEntityBuilder(sceneSize, aimableList, objectBuilder);
+		this.entityBuilder = entityBuilder;
 		this.sceneSize = sceneSize;
-		shipIsAlive = true;
 	}
 	
 	public final void buildInBackground() {
@@ -60,6 +58,10 @@ public abstract class GameModule {
 		}
 	}
 
+	public boolean isShipAlive() {
+		return entityBuilder.getModuleSynchronizationManager().isShipAlive();
+	}
+	
 	protected abstract void executeLogic();
 
 	private enum BuildState {
