@@ -24,4 +24,9 @@ public class Animations {
 		return new SingleImageAnimation(ib.getBulletImage());
 	}
 
+	public static SingleImageAnimation weaponAnimation() {
+		ImagesBuilder ib = ImagesBuilder.getInstance();
+		return new SingleImageAnimation(ib.getWeaponImage());
+	}
+
 }

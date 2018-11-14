@@ -1,9 +1,8 @@
 package my.projects.spacerangers2.game.scene;
 
+import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
-import my.projects.spacerangers2.game.concurrent.LevelSynchronizationManager;
-import my.projects.spacerangers2.game.concurrent.ModuleSynchronizationManager;
 import my.projects.spacerangers2.game.entities.Asteroid;
 import my.projects.spacerangers2.game.entities.SpaceEntityCreator;
 import my.projects.spacerangers2.game.geometry.Vector2D;
@@ -12,38 +11,50 @@ public class TestModule extends GameModule {
 
 
 	private Asteroid asteroids[];
-	
-	public TestModule(Vector2D sceneSize, SpaceEntityCreator entityBuilder) {
-		super(sceneSize, entityBuilder);
+	private int asteroidsCount;
+	private Semaphore s;
+
+	public TestModule(Vector2D sceneSize, SpaceEntityCreator entityCreator, Semaphore s) {
+		super(sceneSize, entityCreator);
+		this.s = s;
 	}
 
 	@Override
-	protected void buildLogic() {
-		int n = 5;
-		asteroids = new Asteroid[n];
-		for(int i = 0;i<n;i++) {
+	protected void build() {
+		asteroidsCount = 20;
+		asteroids = new Asteroid[asteroidsCount];
+		for(int i = 0;i<asteroidsCount;i++) {
 			double left = Math.random()*(sceneSize.x-50);
-			double right = Math.random()*(sceneSize.y-50);
-			double speed = Math.random()*10 + 2;
-			asteroids[i] = entityBuilder.makeAsteroid(left, right, speed, 50, 500);
+			double right = Math.random()*(sceneSize.y-500);
+			double speed = Math.random()*9 + 3;
+			asteroids[i] = entityCreator.makeAsteroid(left, right, speed, 10, 25);
 		}
 	}
 
 	@Override
-	protected void executeLogic() {
-		ModuleSynchronizationManager manager = entityBuilder.getModuleSynchronizationManager();
-		
-		for(Asteroid e : asteroids) {
-			Thread t = new Thread(e);
+	protected void execute() {
+		for(int i = 0;i<asteroidsCount;i++) {
+			Asteroid as = asteroids[i];
+			Thread t = new Thread(()-> {
+				as.run();
+				s.release();
+			});
 			t.setDaemon(true);
 			t.start();
+			if (s.availablePermits() >= 1000) {
+				break;
+			}
 			try {
-				TimeUnit.MILLISECONDS.sleep((long)(Math.random()*200) + 800);
+				TimeUnit.MILLISECONDS.sleep((long)(Math.random()*200) + 400);
 			} catch (InterruptedException ex) {
 				ex.printStackTrace();
 			}
 		}
-		manager.waitForFightEnd();
+		try {
+			s.acquire(asteroidsCount);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 	}
 
 }

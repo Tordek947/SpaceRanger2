@@ -2,30 +2,30 @@ package my.projects.spacerangers2.game.objects;
 
 import javafx.scene.layout.Pane;
 import my.projects.spacerangers2.game.common.AbstractAnimation;
+import my.projects.spacerangers2.game.common.SingleImageAnimation;
 import my.projects.spacerangers2.game.geometry.Bounds;
 import my.projects.spacerangers2.game.geometry.Point2D;
 import my.projects.spacerangers2.game.geometry.Vector2D;
 
-public abstract class SpaceObject<T extends AbstractAnimation> implements Boundable, Visible, Positionable, Performable, Movable {
+public abstract class SpaceObject<T extends AbstractAnimation> implements Visible, Positionable, Performable, Movable {
 	
 	private Point2D topLeftPosition;
 	protected T animation;
 	private Pane representingStage;
 	private boolean isOnStage;
-	/**
-	 * they have to be calculated according to specified animation and are binded to topLeftPosition as their origin.
-	 */
-	private Bounds bounds;
 	
-	public SpaceObject(T animation, Pane representingStage, Bounds bounds) {
-		topLeftPosition = new Point2D();
+	
+	public SpaceObject(T animation, Point2D topLeftPosition) {
+		this.topLeftPosition = topLeftPosition;
 		this.animation = animation;
-		this.representingStage = representingStage;
 		this.isOnStage = false;
-		this.bounds = bounds;
-		bounds.setObjectCoordinatePoint(topLeftPosition);
 	}
-//
+	public SpaceObject(T animation) {
+		this.topLeftPosition = new Point2D();
+		this.animation = animation;
+		this.isOnStage = false;
+	}
+	//
 //	/**
 //	 * Calculate Bounds (depending on particular images in animation)
 //	 * @return calculated bounds
@@ -35,6 +35,10 @@ public abstract class SpaceObject<T extends AbstractAnimation> implements Bounda
 //		bounds.setObjectCoordinatePoint(topLeftPosition);
 //	}
 //	
+	public void setRepresentingStage(Pane representingStage) {
+		this.representingStage = representingStage;
+	}
+	
 	@Override
 	public Point2D getCenterPosition() {
 		double x = topLeftPosition.getX() + animation.getWidth()/2;
@@ -69,13 +73,28 @@ public abstract class SpaceObject<T extends AbstractAnimation> implements Bounda
 		topLeftPosition.setX(left);
 		topLeftPosition.setY(top);
 	}
+	
+	@Override
+	public void setXCenter(double xCenter) {
+		topLeftPosition.setX(xCenter - animation.getWidth()/2);
+	}
+	
+	@Override
+	public void setBottom(double bottom) {
+		topLeftPosition.setY(bottom - animation.getHeight());
+	}
+
+	@Override
+	public double getLeftRightCenter() {
+		return topLeftPosition.getX() +  animation.getWidth()/2;
+	}
 
 	/**
 	 * Binds the animation to the specified Pane
 	 */
 	@Override
 	public void show() {
-		if (!isOnStage) {
+		if (representingStage != null && !isOnStage) {
 			isOnStage = true;
 			animation.bindToParent(representingStage);
 		}
@@ -86,22 +105,12 @@ public abstract class SpaceObject<T extends AbstractAnimation> implements Bounda
 	 */
 	@Override
 	public void hide() {
-		if (isOnStage) {
+		if (representingStage != null && isOnStage) {
 			isOnStage = false;
 			animation.removeFromParent(representingStage);
 		}
 	}
-
-	@Override
-	public Bounds getBounds() {
-		return bounds;
-	}
 	
-	@Override
-	public javafx.geometry.Bounds getApproximateBounds() {
-		return animation.getBounds();
-	}
-
 	@Override
 	public void moveByVector(Vector2D delta) {
 		topLeftPosition.shiftBy(delta);

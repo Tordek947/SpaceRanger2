@@ -7,11 +7,15 @@ import my.projects.spacerangers2.game.geometry.Vector2D;
 
 public class Appearances {
 	
-	public static Appearance<SpriteAnimation> userShipAppearance() {
+	public static Appearance<SpriteAnimation> userShipAppearance() {//
 		Bounds bounds = new Bounds();
 		/*
 		 * Here you have to initialize bounds
 		 */
+		GeometricalPrimitive circle = new Circle(60);
+//		Vector2D shiftToCircle = new Vector2D(22,22);
+		Vector2D shiftToCircle = new Vector2D(64,54);
+		bounds.addPrimitive(shiftToCircle, circle);
 		return new Appearance<SpriteAnimation>(Animations.userShipSA(),bounds );
 	}
 	
@@ -25,13 +29,13 @@ public class Appearances {
 	
 	public static Appearance<SingleImageAnimation> bulletAppearance(){
 		Bounds bounds = new Bounds();
-		/*
-		 * Here you have to initialize bounds
-		 */
+		GeometricalPrimitive circle = new Circle(4);
+		Vector2D shiftToCircle = new Vector2D(4,4);
+		bounds.addPrimitive(shiftToCircle, circle);
 		return new Appearance<SingleImageAnimation>(Animations.bulletSIA(),bounds );
 	}
 
-	public static Appearance<SpriteAnimation> explosionAppearance() {///
+	public static Appearance<SpriteAnimation> explosionAppearance() {////You have to remove this at all
 		Bounds bounds = new Bounds();
 		return new Appearance<SpriteAnimation>(Animations.explosionSA(), bounds);
 	}

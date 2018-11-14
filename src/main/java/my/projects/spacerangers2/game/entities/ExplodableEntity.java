@@ -1,10 +1,11 @@
 package my.projects.spacerangers2.game.entities;
 
+import javafx.application.Platform;
 import my.projects.spacerangers2.game.concurrent.LevelEntitySynchronizable;
 import my.projects.spacerangers2.game.geometry.Point2D;
-import my.projects.spacerangers2.game.objects.SpaceObject;
+import my.projects.spacerangers2.game.objects.BoundableSpaceObject;
 
-public abstract class ExplodableEntity<T extends SpaceObject<?>> extends SpaceEntity<T>{
+public abstract class ExplodableEntity<T extends BoundableSpaceObject<?>> extends SpaceEntity<T>{
 
 	private Explosion explosion;
 	
@@ -16,18 +17,25 @@ public abstract class ExplodableEntity<T extends SpaceObject<?>> extends SpaceEn
 		this.explosion = explosion;
 	}
 	
-	protected void launchExplosionIfPresent(boolean lastExplosion) {
-		if (explosion != null) {
+	@Override
+	protected void removeObjectFromScene() {
+		if (explosion!=null) {
 			Point2D centerPoint = object.getCenterPosition();
 			explosion.object.setCenterPosition(centerPoint);
-			explosion.setLast(lastExplosion);
-			Thread t = new Thread(explosion);
-			t.setDaemon(true);
-			t.start();
+			Platform.runLater(()->{
+				object.hide();
+				explosion.initializeObject();
+			});
+		} else {
+			super.removeObjectFromScene();
 		}
+		
 	}
 	
 	protected void launchExplosionIfPresent() {
-		launchExplosionIfPresent(false);
+		if (explosion != null) {
+			explosion.run();
+		}
 	}
+
 }

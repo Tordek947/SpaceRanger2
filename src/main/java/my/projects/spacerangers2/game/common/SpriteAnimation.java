@@ -47,6 +47,15 @@ public class SpriteAnimation extends AbstractAnimation {
 			currentImg.decrementAndGet();
 		}
 	}
+	
+	public void flipToCenter() {
+		int ind = currentImg.get();
+		if (ind > imageCount/2) {
+			currentImg.decrementAndGet();
+		} else if (ind < imageCount/2) {
+			currentImg.incrementAndGet();
+		}
+	}
 
 	public int getFlipCount() {
 		return images.length;

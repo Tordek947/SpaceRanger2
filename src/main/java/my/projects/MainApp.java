@@ -7,7 +7,11 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.event.EventType;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Dialog;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
@@ -42,13 +46,14 @@ public class MainApp extends Application {
 			@Override
 			public void handle(WorkerStateEvent event) {
 				try {
-					System.out.println("ShipIsAlive :"+gameLevel.get());
-					Platform.exit();
+					boolean shipIsAlive = gameLevel.get();
+					Dialog<ButtonType> d = new Alert(AlertType.INFORMATION);
+					d.setHeaderText(shipIsAlive ? "You WON!" : "You LOOSE!");
+					d.setOnHiding((e)->Platform.exit());
+					d.showAndWait();
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				} catch (ExecutionException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}

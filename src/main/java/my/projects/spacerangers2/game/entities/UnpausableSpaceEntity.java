@@ -2,7 +2,6 @@ package my.projects.spacerangers2.game.entities;
 
 import javafx.application.Platform;
 import my.projects.spacerangers2.game.concurrent.LevelEntitySynchronizable;
-import my.projects.spacerangers2.game.concurrent.ModuleWarriorSynchronizable;
 import my.projects.spacerangers2.game.objects.SpaceObject;
 
 public abstract class UnpausableSpaceEntity<T extends SpaceObject<?>> implements Runnable {
@@ -21,7 +20,7 @@ public abstract class UnpausableSpaceEntity<T extends SpaceObject<?>> implements
 	
 	@Override
 	public void run() {
-		initializeObject();
+		//initializeObject();
 		while(aliveCondition()) {
 			if (synchronizer.isSceneDisabled()) {
 				break;
@@ -35,7 +34,10 @@ public abstract class UnpausableSpaceEntity<T extends SpaceObject<?>> implements
 	
 
 	protected void showObjectOnScene() {
-		Platform.runLater(()->object.show());
+		Platform.runLater(()->{
+			object.show();
+			object.perform();
+		});
 	}
 	
 	protected void removeObjectFromScene() {

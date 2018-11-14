@@ -1,5 +1,11 @@
 package my.projects.spacerangers2.game.entities;
 
+//import java.io.ByteArrayInputStream;
+//import java.io.ByteArrayOutputStream;
+//import java.io.IOException;
+//import java.io.ObjectInputStream;
+//import java.io.ObjectOutputStream;
+//import java.io.Serializable;
 import java.util.Iterator;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -28,6 +34,29 @@ public class Bullet extends ExplodableEntity<SimpleSpaceObject> {
 		isAlive = true;
 		targetIsUserShip = false;
 	}
+//	
+//	public static Bullet copyOf(Bullet other) {
+//		Bullet copyOfOther = null;
+//		ByteArrayOutputStream baos = new ByteArrayOutputStream(64);
+//		ObjectOutputStream ous;
+//		try {
+//			ous = new ObjectOutputStream(baos);
+//			ous.writeObject(other);
+//			ous.close();
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
+//		ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+//		ObjectInputStream ois;
+//		try {
+//			ois = new ObjectInputStream(bais);
+//			copyOfOther = (Bullet)ois.readObject();
+//		} catch (ClassNotFoundException | IOException e) {
+//			e.printStackTrace();
+//		}
+//		return copyOfOther;
+//		
+//	}
 
 	public void setSpeed(double speed) {
 		this.speed = speed;
@@ -38,7 +67,7 @@ public class Bullet extends ExplodableEntity<SimpleSpaceObject> {
 	}
 	
 	public void setSpeedDirection(boolean up) {
-		velocity = new Vector2D(0,up? 1 : -1);
+		velocity = new Vector2D(0,up? -1 : 1);
 	}
 	
 	@Override
@@ -60,7 +89,7 @@ public class Bullet extends ExplodableEntity<SimpleSpaceObject> {
 			userShipBounds.ifPresent(ifIntersectsHitPerformer);
 		} else {
 			Iterator<Aimable> enemies = aimableList.observeEnemies();
-			enemies.forEachRemaining(ifIntersectsHitPerformer);
+			enemies.forEachRemaining(ifIntersectsHitPerformer);//
 		}
 		computeNextState();
 	}
@@ -83,7 +112,7 @@ public class Bullet extends ExplodableEntity<SimpleSpaceObject> {
 		
 		@Override
 		public void accept(Aimable t) {
-			if (t.getApproximateBounds().intersects(object.getApproximateBounds()) && 
+			if (isAlive && t.getApproximateBounds().intersects(object.getApproximateBounds()) && 
 					t.getBounds().intersect(object.getBounds())) {
 				t.recieveDamage(damage);
 				isAlive = false;

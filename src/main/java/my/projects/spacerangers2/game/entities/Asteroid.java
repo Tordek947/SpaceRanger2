@@ -4,20 +4,15 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
-import javafx.application.Platform;
 import my.projects.spacerangers2.game.concurrent.AimableModifiableList;
-import my.projects.spacerangers2.game.concurrent.AimableWatchList;
 import my.projects.spacerangers2.game.concurrent.LevelEntitySynchronizable;
-import my.projects.spacerangers2.game.concurrent.GameLevelSynchronizer;
-import my.projects.spacerangers2.game.concurrent.ModuleWarriorSynchronizable;
 import my.projects.spacerangers2.game.geometry.Point2D;
 import my.projects.spacerangers2.game.geometry.Vector2D;
 import my.projects.spacerangers2.game.objects.AnimatedSpaceObject;
-import my.projects.spacerangers2.game.objects.Boundable;
 
 public class Asteroid extends ExplodableEntity<AnimatedSpaceObject> implements Aimable{
 	
-	
+	public static AtomicInteger deathsCount = new AtomicInteger(0);
 	private AtomicInteger health;
 	private double speed;
 	private double damage;
@@ -25,16 +20,14 @@ public class Asteroid extends ExplodableEntity<AnimatedSpaceObject> implements A
 	private Vector2D sceneSize;
 	private AimableModifiableList aimableList;
 	private Consumer<Aimable> ifIntersectsHitPerformer;
-	private ModuleWarriorSynchronizable warriorSynchronizer;
 	
 	public Asteroid(Vector2D sceneSize,LevelEntitySynchronizable synchronizer , AnimatedSpaceObject object,
-			AimableModifiableList aimableList, ModuleWarriorSynchronizable warriorSynchronizer) {
+			AimableModifiableList aimableList) {
 		super(synchronizer, object);
 		health = new AtomicInteger();
 		velocity = Vector2D.randomDirection();
 		this.sceneSize = sceneSize;
 		this.aimableList = aimableList;
-		this.warriorSynchronizer = warriorSynchronizer;
 	}
 
 	public void setHealth(int health) {
@@ -70,11 +63,11 @@ public class Asteroid extends ExplodableEntity<AnimatedSpaceObject> implements A
 		Optional<Aimable> userShipBounds = aimableList.getUserShip();
 		userShipBounds.ifPresent(ifIntersectsHitPerformer);
 		computeNextState();
+		//System.out.println("is living..."+health.get()+" "+this.object.getLeft()+" "+this.object.getTop());
 	}
 
 	protected void computeNextState() {
 		computeVelocity();
-		health.decrementAndGet();//
 		object.moveByVector(velocity);
 		object.nextAnimationFrame();
 	}
@@ -91,14 +84,16 @@ public class Asteroid extends ExplodableEntity<AnimatedSpaceObject> implements A
 		} else if (bounds.getMaxY() > sceneSize.y) {
 			velocity.y = -Math.abs(velocity.y);
 		}
+		if (velocity.x == Double.NaN || velocity.y == Double.NaN) {
+			System.out.println("some velocity is NaN!!");
+		}
 	}
 
 	@Override
 	protected void finalizeObject() {
 		aimableList.remove(this);
 		removeObjectFromScene();
-		boolean isLastEnemy = warriorSynchronizer.enemyDyingIsLast();
-		launchExplosionIfPresent(isLastEnemy);
+		launchExplosionIfPresent();
 	}
 
 
@@ -111,9 +106,10 @@ public class Asteroid extends ExplodableEntity<AnimatedSpaceObject> implements A
 
 		@Override
 		public void accept(Aimable t) {
-			if (t.getApproximateBounds().intersects(object.getApproximateBounds()) && 
+			if (t.getApproximateBounds().intersects(object.getApproximateBounds()) &&
 					t.getBounds().intersect(object.getBounds())) {
 				t.recieveDamage(damage);
+				recieveDamage(damage);
 				translateVelocityAwayFromEnemy(t);
 			}
 		}

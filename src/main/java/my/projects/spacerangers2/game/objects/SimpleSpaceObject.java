@@ -3,12 +3,13 @@ package my.projects.spacerangers2.game.objects;
 import javafx.scene.layout.Pane;
 import my.projects.spacerangers2.game.common.Appearance;
 import my.projects.spacerangers2.game.common.SingleImageAnimation;
+import my.projects.spacerangers2.game.geometry.Point2D;
 
-public class SimpleSpaceObject extends SpaceObject<SingleImageAnimation> {
+public class SimpleSpaceObject extends BoundableSpaceObject<SingleImageAnimation> {
 
-	public SimpleSpaceObject(Appearance<SingleImageAnimation> appearance, Pane representingStage) {
-		super(appearance.getAnimation(), representingStage, appearance.getBounds());
-		// TODO Auto-generated constructor stub
+	public SimpleSpaceObject(Appearance<SingleImageAnimation> appearance) {
+		super(appearance.getAnimation(), appearance.getBounds(), new Point2D());
 	}
+
 
 }

@@ -4,9 +4,9 @@ import javafx.application.Platform;
 import my.projects.spacerangers2.game.concurrent.LevelEntitySynchronizable;
 import my.projects.spacerangers2.game.geometry.Bounds;
 import my.projects.spacerangers2.game.objects.Boundable;
-import my.projects.spacerangers2.game.objects.SpaceObject;
+import my.projects.spacerangers2.game.objects.BoundableSpaceObject;
 
-public abstract class SpaceEntity<T extends SpaceObject<?>> implements Runnable,  Boundable,
+public abstract class SpaceEntity<T extends BoundableSpaceObject<?>> implements Runnable,  Boundable,
 	Comparable<Object> {
 	
 	private LevelEntitySynchronizable synchronizer;
@@ -29,13 +29,17 @@ public abstract class SpaceEntity<T extends SpaceObject<?>> implements Runnable,
 				synchronizer.waitForSceneResume();
 			}
 			if (synchronizer.isSceneDisabled()) {
-				break;
+				return;
 			}
-			Platform.runLater(()->object.perform());
+			Platform.runLater(()->perform());
 			performLifecycleIteration();
 			synchronizer.waitForAnimationTick();
 		}
 		finalizeObject();
+	}
+
+	protected void perform() {
+		object.perform();
 	}
 
 	@Override
