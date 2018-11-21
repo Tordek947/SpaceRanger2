@@ -4,7 +4,6 @@ import java.util.Iterator;
 import java.util.Optional;
 import java.util.SortedSet;
 import java.util.concurrent.ConcurrentSkipListSet;
-import java.util.function.Consumer;
 
 import my.projects.spacerangers2.game.entities.Aimable;
 

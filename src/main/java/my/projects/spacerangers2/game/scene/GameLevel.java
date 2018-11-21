@@ -45,25 +45,26 @@ public class GameLevel extends Task<Boolean>{
 	}
 
 	public void build() {
-        backgroundMusic = new Voice(MusicsBuilder.getInstance().get(StreamName.LONG_WAY_BALLADE));
+        backgroundMusic = new Voice();
+        backgroundMusic.openClip(MusicsBuilder.getInstance().get(StreamName.LONG_WAY_BALLADE));
 		Pane rootNode = new BorderPane();
 		stage.setFullScreenExitKeyCombination(KeyCombination.keyCombination("Q"));
 		stage.setFullScreenExitHint(
 				"Press the Space to start a game, escape to pause, Q to exit a fullscreen mode");
 		stage.setFullScreen(true);
 		Vector2D sceneSize = getScreenMaxSize();
+        Scene scene = new Scene(rootNode, sceneSize.x, sceneSize.y);
+//      scene.getStylesheets().add("/styles/styles.css");
 		levelSynchronizer = new GameLevelSynchronizer();
 		AimableModifiableList aimableList = new AimableSkipList();
 		SpaceObjectBuilder.initializeInstance(rootNode);
 		SpaceEntityCreator entityCreator = new SpaceEntityCreator(sceneSize, aimableList, levelSynchronizer, rootNode);
-		userShip = entityCreator.makeUserShip(6, 180);
+		userShip = entityCreator.makeUserShip(6, 50);
 		addUserShipKeyEventHandler();
 		Weapon weapon = entityCreator.makeWeapon(10, 7, 100);
 		userShip.setWeapon(weapon);
 		modulesCount = 3;
 		gameModules = new GameModule[modulesCount];
-        Scene scene = new Scene(rootNode, sceneSize.x, sceneSize.y);
-//        scene.getStylesheets().add("/styles/styles.css");
         s = new Semaphore(0);
         for(int i = 0;i<modulesCount;i++) {
     		gameModules[i] = new TestModule(sceneSize, entityCreator, s);

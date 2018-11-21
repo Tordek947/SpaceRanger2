@@ -1,7 +1,6 @@
 package my.projects.spacerangers2.game.concurrent;
 
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class GameLevelSynchronizer implements LevelEntitySynchronizable, LevelSynchronizationManager {
 

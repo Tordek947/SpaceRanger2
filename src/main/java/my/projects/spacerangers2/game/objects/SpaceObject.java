@@ -2,8 +2,6 @@ package my.projects.spacerangers2.game.objects;
 
 import javafx.scene.layout.Pane;
 import my.projects.spacerangers2.game.common.AbstractAnimation;
-import my.projects.spacerangers2.game.common.SingleImageAnimation;
-import my.projects.spacerangers2.game.geometry.Bounds;
 import my.projects.spacerangers2.game.geometry.Point2D;
 import my.projects.spacerangers2.game.geometry.Vector2D;
 
@@ -25,16 +23,7 @@ public abstract class SpaceObject<T extends AbstractAnimation> implements Visibl
 		this.animation = animation;
 		this.isOnStage = false;
 	}
-	//
-//	/**
-//	 * Calculate Bounds (depending on particular images in animation)
-//	 * @return calculated bounds
-//	 */
-//	private void initializeBounds() {
-//		bounds = boundsInitializer.get();
-//		bounds.setObjectCoordinatePoint(topLeftPosition);
-//	}
-//	
+
 	public void setRepresentingStage(Pane representingStage) {
 		this.representingStage = representingStage;
 	}

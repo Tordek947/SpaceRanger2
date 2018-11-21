@@ -1,5 +1,6 @@
 package my.projects.spacerangers2.game.common;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.concurrent.Semaphore;
@@ -31,6 +32,7 @@ public class Voice {
 	}
 	
 	public void openClip(InputStream voiceContent) {
+		voiceContent = new BufferedInputStream(voiceContent);
 		AudioInputStream ais = null;
 		try {
 			ais = AudioSystem.getAudioInputStream(voiceContent);
